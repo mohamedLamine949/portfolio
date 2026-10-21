@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getProjets, CATEGORIES, type Categorie } from '../../lib/projets';
+
+const projets = await getProjets();
+const groupes = (Object.keys(CATEGORIES) as Categorie[])
+  .map((key) => ({ key, ...CATEGORIES[key], items: projets.filter((p) => p.data.category === key) }))
+  .filter((g) => g.items.length > 0);
+---
+<Base
+  title="Projets : entrepreneuriat, stages, projets académiques et recherche"
+  description="Projets de Mohamed Lamine Kone, ingénieur informatique : produits de l'ESN Sirius, missions de stage, projets académiques à CY Tech et projet de recherche."
+>
+  <section class="head">
+    <div class="wrap">
+      <p class="kicker rise">Réalisations</p>
+      <h1 class="rise" style="--d:.06s">Projets</h1>
+      <p class="lead rise" style="--d:.12s">
+        {projets.length} projets classés selon leur cadre de réalisation : entrepreneuriat, stage, formation académique et recherche.
+        Chaque fiche précise le contexte, le rôle tenu et les résultats obtenus.
+      </p>
+      <nav class="jump rise" style="--d:.18s" aria-label="Catégories de projets">
+        {groupes.map((g) => (
+          <a href={`#${g.key}`} style={`--c: var(--cat-${g.key})`}>
+            <span class="swatch"></span>{g.label}<span class="n mono">{g.items.length}</span>
+          </a>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  {groupes.map((g, gi) => (
+    <section class:list={['group', { alt: gi % 2 === 1 }]} id={g.key} style={`--c: var(--cat-${g.key})`}>
+      <div class="wrap">
+        <header class="group-head" data-reveal>
+          <p class="kicker">{String(gi + 1).padStart(2, '0')} · {g.short}</p>
+          <h2>{g.label}</h2>
+          <p>{g.intro}</p>
+        </header>
+        <div class="grid">
+          {g.items.map((p, i) => <ProjectCard projet={p} delay={(i % 3) * 0.08} />)}
+        </div>
+      </div>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .head { padding: 64px 0 40px; border-bottom: 1px solid var(--line); }
+  h1 { font-size: clamp(38px, 5vw, 56px); font-weight: 700; letter-spacing: -.025em; margin: 14px 0 14px; }
+  .lead { color: var(--ink-2); font-size: 17px; max-width: 66ch; margin: 0; }
+  .jump { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  .jump a {
+    display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+    font-size: 14px; font-weight: 500; padding: 9px 14px; border-radius: 6px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    transition: border-color .2s ease;
+  }
+  .jump a:hover { border-color: var(--c); }
+  .swatch { width: 10px; height: 10px; border-radius: 2px; background: var(--c); }
+  .n { font-size: 12px; color: var(--muted); }
+
+  .group { padding: 72px 0; }
+  .group.alt { background: var(--bg-alt); }
+  .group-head { margin-bottom: 32px; max-width: 70ch; }
+  .group-head .kicker { color: var(--c); }
+  .group-head .kicker::after { background: var(--c); }
+  .group-head h2 { font-size: clamp(26px, 3.2vw, 34px); margin-top: 10px; }
+  .group-head p:not(.kicker) { color: var(--ink-2); margin: 10px 0 0; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .grid { grid-template-columns: 1fr; } .head { padding-top: 44px; } .group { padding: 52px 0; } }
+</style>

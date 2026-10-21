@@ -1,0 +1,99 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+const SITE_NAME = 'Mohamed Lamine Kone';
+const DEFAULT_TITLE = 'Mohamed Lamine Kone | Ingénieur informatique, chef de projet digital et consultant en transformation numérique';
+const DEFAULT_DESCRIPTION =
+  "Ingénieur informatique diplômé de CY Tech (2026), cofondateur de l'ESN Sirius. Chef de projet digital, consultant AMOA et transformation numérique. Expériences, projets et contact.";
+
+const { title, description = DEFAULT_DESCRIPTION, jsonLd } = Astro.props;
+const fullTitle = title ? `${title} | ${SITE_NAME}` : DEFAULT_TITLE;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE_NAME} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#12355b" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="profile:first_name" content="Mohamed Lamine" />
+    <meta property="profile:last_name" content="Kone" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Apparition progressive des blocs marqués data-reveal.
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-in');
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+      );
+      document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+      // Compteurs animés : <span data-count="1600" data-suffix="+">1 600+</span>
+      const fmt = new Intl.NumberFormat('fr-FR');
+      const counters = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          counters.unobserve(e.target);
+          const el = e.target as HTMLElement;
+          const target = Number(el.dataset.count);
+          const suffix = el.dataset.suffix ?? '';
+          if (reduce || !Number.isFinite(target)) continue;
+          const start = performance.now();
+          const dur = 1200;
+          const step = (now: number) => {
+            const t = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = fmt.format(Math.round(target * eased)) + suffix;
+            if (t < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      }, { threshold: 0.6 });
+      document.querySelectorAll('[data-count]').forEach((el) => counters.observe(el));
+    </script>
+  </body>
+</html>

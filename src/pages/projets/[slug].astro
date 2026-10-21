@@ -1,0 +1,169 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { getProjets, CATEGORIES, type Projet } from '../../lib/projets';
+
+export async function getStaticPaths() {
+  const projets = await getProjets();
+  return projets.map((projet, i) => ({
+    params: { slug: projet.id },
+    props: { projet, next: projets[(i + 1) % projets.length] },
+  }));
+}
+
+interface Props {
+  projet: Projet;
+  next: Projet;
+}
+
+const { projet, next } = Astro.props;
+const { data } = projet;
+const { Content } = await render(projet);
+const first = data.gallery[0]?.src;
+const portrait = !!first && first.height > first.width;
+const showCover = !!data.cover && data.showCover;
+// Sans capture affichée en tête, l'illustration accompagne l'en-tête.
+const sideIllustration = !showCover && data.gallery.length === 0 ? data.illustration : undefined;
+const categorie = CATEGORIES[data.category];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: data.title,
+  description: data.summary,
+  creator: { '@type': 'Person', name: 'Mohamed Lamine Kone', url: 'https://mohamedlaminekone.com' },
+  keywords: data.tags.join(', '),
+  inLanguage: 'fr',
+};
+---
+<Base title={data.title} description={data.summary} jsonLd={jsonLd}>
+  <article style={`--c: var(--cat-${data.category})`}>
+    <header class="head">
+      <div class:list={['wrap', { 'with-illus': sideIllustration }]}>
+        <div>
+          <nav class="crumbs rise" aria-label="Fil d'Ariane">
+            <a href="/">Accueil</a><span>/</span><a href="/projets">Projets</a><span>/</span><a href={`/projets#${data.category}`}>{categorie.label}</a>
+          </nav>
+          <p class="cat rise" style="--d:.04s">{categorie.cadre}</p>
+          <h1 class="rise" style="--d:.08s">{data.title}</h1>
+          <p class="lead rise" style="--d:.14s">{data.summary}</p>
+        </div>
+        {sideIllustration && (
+          <div class="illus rise" style="--d:.2s"><Image src={sideIllustration} alt="" /></div>
+        )}
+      </div>
+      <div class="wrap">
+        <dl class="facts rise" style="--d:.2s">
+          <div><dt>Cadre</dt><dd>{categorie.cadre}</dd></div>
+          <div><dt>Rôle</dt><dd>{data.role}</dd></div>
+          <div><dt>Période</dt><dd>{data.period}</dd></div>
+          <div><dt>Organisation</dt><dd>{data.context}</dd></div>
+        </dl>
+        {data.tags.length > 0 && (
+          <div class="tags rise" style="--d:.24s">{data.tags.map((t) => <span class="tag">{t}</span>)}</div>
+        )}
+      </div>
+    </header>
+
+    {data.metrics.length > 0 && (
+      <div class="wrap">
+        <ul class="metrics">
+          {data.metrics.map((m, i) => <li data-reveal style={`--d:${i * 0.07}s`}><strong>{m.value}</strong><span>{m.label}</span></li>)}
+        </ul>
+      </div>
+    )}
+
+    {showCover && data.cover && (
+      <div class="wrap cover" data-reveal>
+        <Image src={data.cover} alt={data.coverAlt ?? ''} widths={[640, 1160, 1740, 2320]} sizes="(max-width: 1160px) 100vw, 1160px" loading="eager" />
+      </div>
+    )}
+
+    <div class="wrap body">
+      <div class="prose" data-reveal><Content /></div>
+
+      {data.gallery.length > 0 && (
+        <section class="gallery-wrap" aria-label="Captures">
+          <h2 class="gallery-title">Captures</h2>
+          <div class:list={['gallery', { portrait }]}>
+            {data.gallery.map((g, i) => (
+              <figure data-reveal style={`--d:${(i % 3) * 0.07}s`}>
+                <Image src={g.src} alt={g.alt} widths={portrait ? [360, 720] : [720, 1160, 1740]} sizes={portrait ? '(max-width: 640px) 50vw, 380px' : '(max-width: 1160px) 100vw, 1160px'} />
+                <figcaption>{g.alt}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {data.links.length > 0 && (
+        <div class="links" data-reveal>
+          {data.links.map((l, i) => <a class:list={['btn', { 'btn-primary': i === 0 }]} href={l.url} target="_blank" rel="noopener">{l.label} ↗</a>)}
+        </div>
+      )}
+    </div>
+
+    <nav class="wrap next" aria-label="Projet suivant">
+      <a href={`/projets/${next.id}`} data-reveal>
+        <span class="mono">Projet suivant</span>
+        <strong>{next.data.title} →</strong>
+      </a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .head { padding: 40px 0 0; }
+  .with-illus { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; }
+  .illus { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 10%, #fff), #f7f9fc); border: 1px solid var(--line); border-radius: var(--radius); padding: 32px; }
+  .illus img { width: 100%; max-height: 260px; object-fit: contain; }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13.5px; color: var(--muted); margin-bottom: 26px; }
+  .crumbs a { text-decoration: none; }
+  .crumbs a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+  h1 { font-size: clamp(30px, 4.2vw, 46px); font-weight: 700; letter-spacing: -.02em; margin: 14px 0 14px; max-width: 26ch; }
+  .lead { font-size: 18px; color: var(--ink-2); max-width: 66ch; margin: 0; }
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 36px 0 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  .facts div { padding: 16px 18px; }
+  .facts div + div { border-left: 1px solid var(--line); }
+  dt { font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  dd { margin: 6px 0 0; font-weight: 500; font-size: 14.5px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
+  .metrics { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+  .metrics li { border-left: 3px solid var(--c); background: var(--bg-alt); padding: 16px 18px; display: grid; gap: 4px; border-radius: 0 var(--radius) var(--radius) 0; }
+  .metrics strong { font-size: 30px; font-weight: 600; line-height: 1.1; color: var(--navy); letter-spacing: -.02em; }
+  .metrics span { font-size: 13.5px; color: var(--muted); }
+
+  .cover { margin-top: 36px; }
+  .cover img { width: 100%; border-radius: var(--radius); border: 1px solid var(--line); box-shadow: var(--shadow); }
+
+  .body { padding-top: 8px; padding-bottom: 40px; }
+  .gallery-wrap { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .gallery-title { font-size: 22px; margin-bottom: 20px; }
+  .gallery { display: grid; gap: 20px; }
+  .gallery.portrait { grid-template-columns: repeat(3, 1fr); }
+  .gallery img { width: 100%; border-radius: 8px; border: 1px solid var(--line); }
+  figure { margin: 0; }
+  figcaption { font-size: 13.5px; color: var(--muted); margin-top: 8px; }
+  .links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; }
+
+  .next { padding-bottom: 80px; }
+  .next a { display: block; text-decoration: none; background: var(--navy); color: #fff; border-radius: var(--radius); padding: 26px 30px; transition: background .2s ease; }
+  .next a:hover { background: var(--accent); }
+  .next .mono { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #d9b06a; }
+  .next strong { display: block; font-size: 22px; font-weight: 600; margin-top: 6px; }
+
+  @media (max-width: 860px) {
+    .with-illus { grid-template-columns: 1fr; gap: 24px; }
+    .illus { max-width: 420px; }
+    .facts { grid-template-columns: 1fr 1fr; }
+    .facts div:nth-child(3) { border-left: 0; }
+    .facts div:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 560px) {
+    .facts { grid-template-columns: 1fr; }
+    .facts div + div { border-left: 0; border-top: 1px solid var(--line); }
+    .gallery.portrait { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

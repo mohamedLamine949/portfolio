@@ -1,0 +1,332 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getProjets } from '../lib/projets';
+
+const projets = await getProjets();
+const featured = projets.filter((p) => p.data.featured);
+const [hero, ...others] = featured;
+
+const chiffres = [
+  { count: 1600, suffix: '+', label: 'utilisateurs sur Flash Market en trois mois' },
+  { count: 14, suffix: ' mois', label: "d'expérience en entreprise, sur trois stages" },
+  { count: 4, suffix: '', label: 'produits numériques livrés au sein de Sirius' },
+  { count: projets.length, suffix: '', label: 'projets documentés sur ce site' },
+];
+
+const experiences = [
+  {
+    dates: 'Mai 2025 – aujourd’hui',
+    role: 'CEO et cofondateur',
+    org: 'Shepherd · Sirius Solutions Digitales',
+    place: 'Bamako et Paris',
+    text: "Création et direction d'une ESN de cinq personnes, spécialisée dans les applications mobiles et web sur mesure. Pilotage de la marketplace Flash Market (plus de 1 600 utilisateurs en trois mois, paiement par séquestre en production) et de trois projets clients.",
+    href: '/projets#entrepreneuriat',
+  },
+  {
+    dates: 'Avr. – Oct. 2026',
+    role: "Ingénieur développement et DevSecOps, stage de fin d'études (6 mois)",
+    org: 'ASR Groupe',
+    place: 'Sartrouville (78) · logiciels métier et conseil en transformation digitale',
+    text: "Conception d'une plateforme SaaS pour associations livrée en sept sprints, développement du module d'analyse de sécurité de la plateforme d'audit LOCUS, réalisation de trois sites clients.",
+    href: '/projets#stage',
+  },
+  {
+    dates: 'Avr. – Août 2025',
+    role: 'Développeur full stack, stage de mobilité internationale (5 mois)',
+    org: 'BDR Booking',
+    place: 'Portugal',
+    text: "Refonte du backend d'une plateforme SaaS de formations (temps de réponse réduit de 40 %) et intégration des paiements récurrents.",
+    href: '/projets/bdr-booking',
+  },
+  {
+    dates: 'Juin – Août 2024',
+    role: 'Assistant IT et développement, stage de 1re année (3 mois)',
+    org: 'ASR Groupe',
+    place: 'Sartrouville (78)',
+    text: "Déploiement de l'intranet, assistant de support traitant environ 30 % des demandes récurrentes, automatisation de tâches d'administration.",
+    href: '/projets/asr-intranet-chatbot',
+  },
+];
+
+const formation = [
+  {
+    dates: '2023 – 2026',
+    title: "Diplôme d'ingénieur en informatique",
+    org: 'CY Tech, Cergy',
+    detail: "Génie informatique, génie des systèmes, puis spécialité cybersécurité. Projet de fin d'études : plateforme de dossier médical sur blockchain.",
+    href: '/projets/dossier-medical-blockchain',
+  },
+  {
+    dates: '2021 – 2023',
+    title: 'Classes préparatoires MP',
+    org: 'Lycée Reda Slaoui, Maroc',
+    detail: "Mathématiques et physique. TIPE d'une année consacré au captage et à la valorisation du CO₂.",
+    href: '/projets/tipe',
+  },
+  {
+    dates: '2021',
+    title: 'Baccalauréat, sciences mathématiques',
+    org: 'Lycée LSK, Bamako',
+    detail: '',
+    href: '',
+  },
+];
+
+const competences = [
+  { title: 'Gestion de projet', items: ['Cadrage et recueil du besoin', 'Spécifications fonctionnelles', 'Méthodes Agile / Scrum', 'Recette et mise en production', 'Accompagnement des utilisateurs'] },
+  { title: 'Conseil et produit', items: ['Modèle économique', 'Feuille de route et priorisation', 'Indicateurs et tableaux de bord', 'Restitution et recommandations'] },
+  { title: 'Technique', items: ['Web et mobile : React, Next.js, React Native', 'Bases de données : SQL, PostgreSQL', 'API et paiement en ligne', 'Intégration et déploiement continus', 'Développement assisté par IA'] },
+  { title: 'Sécurité et conformité', items: ['RGPD, Privacy by Design', 'Référentiel OWASP', "Audit d'applications web", 'Gestion des identités et des accès'] },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    name: 'Mohamed Lamine Kone',
+    jobTitle: 'Ingénieur informatique, chef de projet digital',
+    description: "Ingénieur informatique diplômé de CY Tech, cofondateur de l'ESN Sirius, orienté gestion de projet digital et transformation numérique.",
+    url: 'https://mohamedlaminekone.com',
+    email: 'mailto:mlkone949@gmail.com',
+    alumniOf: [
+      { '@type': 'CollegeOrUniversity', name: 'CY Tech' },
+      { '@type': 'EducationalOrganization', name: 'Lycée Reda Slaoui' },
+    ],
+    worksFor: { '@type': 'Organization', name: 'Sirius Solutions Digitales', url: 'https://sirius-mali.tech' },
+    knowsLanguage: ['fr', 'en'],
+    knowsAbout: ['Gestion de projet', 'Transformation numérique', 'AMOA', 'Business analysis', 'Développement web et mobile', 'RGPD', 'Sécurité applicative'],
+    address: { '@type': 'PostalAddress', addressRegion: 'Île-de-France', addressCountry: 'FR' },
+    sameAs: ['https://www.linkedin.com/in/mlkon%C3%A9-3ac5/', 'https://github.com/mohamedLamine949'],
+  },
+};
+---
+<Base jsonLd={jsonLd}>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="kicker rise">Ingénieur informatique · CY Tech, promotion 2026</p>
+        <h1 class="rise" style="--d:.08s">Mohamed Lamine Kone</h1>
+        <p class="role rise" style="--d:.16s">Chef de projet digital et consultant en transformation numérique</p>
+        <p class="lead rise" style="--d:.24s">
+          Diplômé de CY Tech en 2026, j'ai conduit des projets numériques du recueil du besoin jusqu'à la mise en production : en entreprise, lors de trois stages, et au sein de Sirius, l'ESN que j'ai cofondée en 2025.
+          Je recherche un poste en CDI de chef de projet, de consultant AMOA ou de business analyst.
+        </p>
+        <div class="ctas rise" style="--d:.32s">
+          <a class="btn btn-primary" href="/cv">Consulter le CV</a>
+          <a class="btn" href="/projets">Consulter les projets</a>
+          <a class="btn" href="#contact">Me contacter</a>
+        </div>
+      </div>
+
+      <aside class="fiche rise" style="--d:.2s" aria-label="Fiche synthèse">
+        <div class="fiche-head">
+          <span class="mono">Fiche synthèse</span>
+          <span class="dispo"><span class="dot"></span>Disponible immédiatement</span>
+        </div>
+        <dl>
+          <div><dt>Contrat recherché</dt><dd>CDI</dd></div>
+          <div><dt>Postes visés</dt><dd>Chef de projet digital, consultant AMOA, business analyst, PMO</dd></div>
+          <div><dt>Secteurs</dt><dd>Secteur public et parapublic, santé, services, conseil</dd></div>
+          <div><dt>Localisation</dt><dd>Île-de-France, mobile sur toute la France</dd></div>
+          <div><dt>Langues</dt><dd>Français courant, anglais C1 (TOEIC 837)</dd></div>
+        </dl>
+      </aside>
+    </div>
+
+    <div class="wrap">
+      <ul class="chiffres">
+        {chiffres.map((c, i) => (
+          <li data-reveal style={`--d:${i * 0.08}s`}>
+            <strong data-count={c.count} data-suffix={c.suffix}>{new Intl.NumberFormat('fr-FR').format(c.count)}{c.suffix}</strong>
+            <span>{c.label}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section alt" id="experience">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div>
+          <p class="kicker">01 · Parcours professionnel</p>
+          <h2 class="section-title">Expérience professionnelle</h2>
+        </div>
+      </div>
+      <ol class="xp">
+        {experiences.map((e, i) => (
+          <li data-reveal style={`--d:${i * 0.06}s`}>
+            <span class="dates mono">{e.dates}</span>
+            <div class="xp-body">
+              <h3>{e.role}</h3>
+              <p class="org">{e.org} <span>· {e.place}</span></p>
+              <p>{e.text}</p>
+              <a class="link-arrow" href={e.href}>Voir les réalisations →</a>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="projets">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div>
+          <p class="kicker">02 · Réalisations</p>
+          <h2 class="section-title">Projets de référence</h2>
+          <p class="section-intro">Une sélection de projets représentatifs. Chaque fiche précise le contexte, le rôle tenu, les réalisations et les résultats obtenus.</p>
+        </div>
+        <a class="link-arrow" href="/projets">Voir les {projets.length} projets →</a>
+      </div>
+      {hero && <ProjectCard projet={hero} large />}
+      <div class="grid">
+        {others.map((p, i) => <ProjectCard projet={p} delay={i * 0.08} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="formation">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div>
+          <p class="kicker">03 · Formation</p>
+          <h2 class="section-title">Formation</h2>
+        </div>
+      </div>
+      <ol class="xp">
+        {formation.map((f, i) => (
+          <li data-reveal style={`--d:${i * 0.06}s`}>
+            <span class="dates mono">{f.dates}</span>
+            <div class="xp-body">
+              <h3>{f.title}</h3>
+              <p class="org">{f.org}</p>
+              {f.detail && <p>{f.detail}</p>}
+              {f.href && <a class="link-arrow" href={f.href}>Voir le projet →</a>}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="competences">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div>
+          <p class="kicker">04 · Compétences</p>
+          <h2 class="section-title">Compétences</h2>
+        </div>
+      </div>
+      <div class="skills">
+        {competences.map((g, i) => (
+          <div data-reveal style={`--d:${i * 0.07}s`}>
+            <h3>{g.title}</h3>
+            <ul>{g.items.map((it) => <li>{it}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="wrap contact-grid" data-reveal>
+      <div>
+        <p class="kicker">05 · Contact</p>
+        <h2>Échangeons sur votre besoin</h2>
+        <p>Je suis disponible pour un entretien, en présentiel ou à distance.</p>
+      </div>
+      <div class="contact-actions">
+        <a class="mail" href="mailto:mlkone949@gmail.com">mlkone949@gmail.com</a>
+        <div class="ctas">
+          <a class="btn btn-light" href="https://www.linkedin.com/in/mlkon%C3%A9-3ac5/" target="_blank" rel="noopener">Profil LinkedIn</a>
+          <a class="btn btn-light" href="/cv">Consulter le CV</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding: 76px 0 0; position: relative; overflow: hidden; }
+  .hero::before {
+    content: ''; position: absolute; inset: 0 0 auto 0; height: 560px; z-index: -1;
+    background:
+      linear-gradient(to bottom, transparent 70%, var(--bg)),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 56px 56px,
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 56px 56px;
+    opacity: .55;
+    mask-image: radial-gradient(ellipse 80% 70% at 70% 20%, #000 30%, transparent 75%);
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 56px; align-items: center; }
+  h1 { font-size: clamp(40px, 5.6vw, 64px); font-weight: 700; letter-spacing: -.025em; margin: 18px 0 8px; line-height: 1.05; }
+  .role { font-size: clamp(18px, 2vw, 22px); font-weight: 500; color: var(--accent); margin: 0 0 20px; }
+  .lead { font-size: 17.5px; color: var(--ink-2); max-width: 62ch; margin: 0; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+
+  .fiche { background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--navy); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 24px; }
+  .fiche-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .fiche-head .mono { font-size: 12px; text-transform: uppercase; color: var(--muted); letter-spacing: .06em; }
+  .dispo { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--cat-stage); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--cat-stage) 45%, transparent); } 50% { box-shadow: 0 0 0 6px transparent; } }
+  dl { margin: 6px 0 0; }
+  dl div { display: grid; grid-template-columns: 130px 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px dashed var(--line); }
+  dl div:last-child { border-bottom: 0; padding-bottom: 0; }
+  dt { font-size: 13px; color: var(--muted); }
+  dd { margin: 0; font-weight: 500; font-size: 14.5px; }
+
+  .chiffres { list-style: none; padding: 0; margin: 72px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .chiffres li { padding: 26px 22px; display: grid; gap: 4px; align-content: start; }
+  .chiffres li + li { border-left: 1px solid var(--line); }
+  .chiffres strong { font-size: 40px; font-weight: 600; line-height: 1.05; color: var(--navy); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .chiffres span { font-size: 14px; color: var(--muted); }
+
+  .xp { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .xp li { display: grid; grid-template-columns: 210px 1fr; gap: 28px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+  .dates { font-size: 13.5px; color: var(--gold); padding-top: 3px; }
+  .xp h3 { font-size: 19px; }
+  .org { margin: 4px 0 10px; font-weight: 600; color: var(--accent); font-size: 15px; }
+  .org span { color: var(--muted); font-weight: 400; }
+  .xp-body p:not(.org) { margin: 0 0 10px; color: var(--ink-2); max-width: 74ch; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 22px; }
+
+  .skills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  .skills > div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+  .skills h3 { font-size: 16px; padding-bottom: 12px; margin-bottom: 14px; border-bottom: 2px solid var(--navy); }
+  .skills ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; color: var(--ink-2); font-size: 14.5px; }
+  .skills li { padding-left: 16px; position: relative; }
+  .skills li::before { content: ''; position: absolute; left: 0; top: .7em; width: 6px; height: 1px; background: var(--gold); }
+
+  .contact { background: var(--navy); color: #dbe5f1; padding: 88px 0; }
+  .contact .kicker { color: #d9b06a; }
+  .contact .kicker::after { background: #d9b06a; }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; }
+  .contact h2 { color: #fff; font-size: clamp(28px, 3.6vw, 38px); margin-top: 12px; }
+  .contact p { margin: 12px 0 0; }
+  .mail { display: inline-block; font-size: clamp(22px, 2.8vw, 30px); font-weight: 600; color: #fff; text-decoration: none; border-bottom: 2px solid #d9b06a; padding-bottom: 4px; overflow-wrap: anywhere; }
+  .mail:hover { border-color: #fff; }
+  .btn-light { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .35); }
+  .btn-light:hover { border-color: #fff; }
+
+  @media (max-width: 960px) {
+    .hero { padding-top: 48px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 36px; }
+    .chiffres { grid-template-columns: repeat(2, 1fr); margin-top: 48px; }
+    .chiffres li:nth-child(3) { border-left: 0; }
+    .chiffres li:nth-child(n + 3) { border-top: 1px solid var(--line); }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .skills { grid-template-columns: 1fr 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .xp li { grid-template-columns: 1fr; gap: 6px; }
+    .grid, .skills { grid-template-columns: 1fr; }
+    .chiffres strong { font-size: 32px; }
+    .chiffres li { padding: 20px 14px; }
+    dl div { grid-template-columns: 1fr; gap: 2px; }
+  }
+</style>

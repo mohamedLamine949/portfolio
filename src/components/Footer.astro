@@ -1,0 +1,28 @@
+---
+const year = new Date().getFullYear();
+---
+<footer>
+  <div class="wrap row">
+    <div>
+      <strong>Mohamed Lamine Kone</strong>
+      <span>Ingénieur informatique · chef de projet digital</span>
+    </div>
+    <nav aria-label="Liens externes">
+      <a href="https://www.linkedin.com/in/mlkon%C3%A9-3ac5/" target="_blank" rel="noopener me">LinkedIn</a>
+      <a href="https://github.com/mohamedLamine949" target="_blank" rel="noopener me">GitHub</a>
+      <a href="https://sirius-mali.tech" target="_blank" rel="noopener">Sirius</a>
+      <a href="mailto:mlkone949@gmail.com">E-mail</a>
+    </nav>
+  </div>
+  <div class="wrap legal">© {year} Mohamed Lamine Kone. Illustrations : unDraw.</div>
+</footer>
+
+<style>
+  footer { background: var(--navy); color: #c9d6e6; padding: 36px 0 24px; font-size: 14px; }
+  .row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: center; }
+  strong { color: #fff; display: block; font-size: 15.5px; }
+  nav { display: flex; gap: 20px; flex-wrap: wrap; }
+  a { text-decoration: none; color: #c9d6e6; }
+  a:hover { color: #fff; }
+  .legal { margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .12); font-size: 12.5px; color: #8fa4bf; }
+</style>

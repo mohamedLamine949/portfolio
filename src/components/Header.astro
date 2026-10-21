@@ -1,0 +1,56 @@
+---
+const path = Astro.url.pathname;
+const links = [
+  { href: '/#experience', label: 'Expérience' },
+  { href: '/projets', label: 'Projets' },
+  { href: '/#formation', label: 'Formation' },
+  { href: '/#contact', label: 'Contact' },
+];
+---
+<header class="site-header">
+  <div class="wrap bar">
+    <a href="/" class="brand" aria-label="Accueil, Mohamed Lamine Kone">
+      <span class="mark" aria-hidden="true">MLK</span>
+      <span class="name">Mohamed Lamine Kone</span>
+    </a>
+    <nav aria-label="Navigation principale">
+      {links.map((l) => (
+        <a href={l.href} class="nav-link" aria-current={l.href === '/projets' && path.startsWith('/projets') ? 'page' : undefined}>{l.label}</a>
+      ))}
+      <a href="/cv" class="cv" aria-current={path.startsWith('/cv') ? 'page' : undefined}>CV</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 30;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--line);
+    view-transition-name: site-header;
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 66px; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .mark {
+    display: grid; place-items: center; width: 36px; height: 36px; border-radius: 6px;
+    background: var(--navy); color: #fff; font-family: var(--mono); font-size: 11.5px;
+  }
+  .name { font-weight: 600; font-size: 15.5px; }
+  nav { display: flex; align-items: center; gap: 2px; }
+  .nav-link { position: relative; text-decoration: none; font-size: 14.5px; font-weight: 500; color: var(--ink-2); padding: 8px 12px; }
+  .nav-link::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 3px; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+  .nav-link:hover, .nav-link[aria-current='page'] { color: var(--ink); }
+  .nav-link:hover::after, .nav-link[aria-current='page']::after { transform: scaleX(1); }
+  .cv { margin-left: 10px; text-decoration: none; font-size: 14px; font-weight: 600; padding: 8px 14px; border-radius: 6px; background: var(--navy); color: #fff; transition: background .2s ease; }
+  .cv:hover { background: var(--accent); }
+  @media (max-width: 760px) {
+    .name { display: none; }
+    .nav-link { padding: 8px 7px; font-size: 13.5px; }
+    .nav-link::after { left: 7px; right: 7px; }
+    .cv { margin-left: 4px; padding: 7px 10px; }
+  }
+  @media (max-width: 400px) {
+    .nav-link[href='/#formation'] { display: none; }
+  }
+</style>
