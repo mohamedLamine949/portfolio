@@ -47,6 +47,14 @@ const experiences = [
     text: "Déploiement de l'intranet, assistant de support traitant environ 30 % des demandes récurrentes, automatisation de tâches d'administration.",
     href: '/projets/asr-intranet-chatbot',
   },
+  {
+    dates: 'Mars 2024 – mars 2025, depuis août 2025',
+    role: 'Équipier polyvalent',
+    org: "McDonald's",
+    place: 'Emploi en parallèle des études',
+    text: "Accueil et service client en période de forte affluence, polyvalence sur l'ensemble des postes, respect des procédures qualité, hygiène et sécurité, travail en équipe sous contrainte de temps.",
+    href: '',
+  },
 ];
 
 const formation = [
@@ -163,7 +171,7 @@ const jsonLd = {
               <h3>{e.role}</h3>
               <p class="org">{e.org} <span>· {e.place}</span></p>
               <p>{e.text}</p>
-              <a class="link-arrow" href={e.href}>Voir les réalisations →</a>
+              {e.href && <a class="link-arrow" href={e.href}>Voir les réalisations →</a>}
             </div>
           </li>
         ))}
